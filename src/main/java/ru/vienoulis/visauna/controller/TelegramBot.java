@@ -19,23 +19,26 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private final String botUsername;
     private final String botToken;
+    private final String defaultMessage;
 
 
     public TelegramBot(
             TelegramBotsApi telegramBotsApi,
+            @Value("${app.defaultMessage}") String defaultMessage,
             @Value("${telegram-bot.name}") String botUsername,
             @Value("${telegram-bot.token}") String botToken) throws TelegramApiException {
         this.botUsername = botUsername;
         this.botToken = botToken;
+        this.defaultMessage = defaultMessage;
         telegramBotsApi.registerBot(this);
     }
 
     @SneakyThrows
     @Override
     public void onUpdateReceived(Update request) {
-        log.info("onUpdateReceived.enter; req: {}", request);
+        log.info("onUpdateReceived.enter; usrMessage: {}", request.getMessage().getText());
         response.setChatId(request.getMessage().getChatId().toString());
-        defaultMsg(response, "Сначала напиши ТЗ");
+        defaultMsg(response, defaultMessage);
         log.info("onUpdateReceived.exit;");
     }
 
