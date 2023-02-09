@@ -14,6 +14,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.Objects;
 
+import static ru.vienoulis.visauna.service.TextService.NO_COMMAND_DEFAULT_MST;
+
 @Slf4j
 @Getter
 @Component
@@ -44,10 +46,18 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
         if (update.hasCallbackQuery()) {
             log.info("hasCallbackQuery");
             var callbackQuery = update.getCallbackQuery();
-            // todo обработка если команды не найдено
-            getRegisteredCommands().stream()
+            var availableCmdList = getRegisteredCommands().stream()
                     .filter(c -> Objects.equals(c.getCommandIdentifier(), callbackQuery.getData()))
-                    .forEach(c -> c.processMessage(this, callbackQuery.getMessage(), null));
+                    .toList();
+            if (availableCmdList.isEmpty()) {
+                defaultMsg(new SendMessage(callbackQuery.getMessage().getChatId().toString(), NO_COMMAND_DEFAULT_MST));
+            } else {
+                availableCmdList.forEach(c -> c.processMessage(this, callbackQuery.getMessage(), null));
+            }
+        }
+
+        if (update.hasMessage()) {
+            defaultMsg(new SendMessage(update.getMessage().getChatId().toString(), NO_COMMAND_DEFAULT_MST));
         }
         log.info("processNonCommandUpdate.exit;");
     }
@@ -58,8 +68,7 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
      * @param response - метод обработки сообщения
      * @param msg      - сообщение
      */
-    private void defaultMsg(SendMessage response, String msg) throws TelegramApiException {
-        response.setText(msg);
+    private void defaultMsg(SendMessage response) throws TelegramApiException {
         execute(response);
     }
 }
