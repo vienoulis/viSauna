@@ -32,7 +32,6 @@ public class StartCmd implements IBotCommand {
     @SneakyThrows
     public void processMessage(AbsSender absSender, Message msg, String[] arguments) {
         SendMessage message = new SendMessage();
-
         message.setChatId(msg.getChatId().toString());
         message.setReplyMarkup(kbService.getChooseHllKb());
         message.setText("Клавиатура после команды старт");
