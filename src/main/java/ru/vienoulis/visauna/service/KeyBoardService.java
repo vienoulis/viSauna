@@ -7,6 +7,9 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 
 import java.util.ArrayList;
 
+import static ru.vienoulis.visauna.model.CallbackQueryHandlers.BIG_HALL;
+import static ru.vienoulis.visauna.model.CallbackQueryHandlers.SMALL_HALL;
+
 @Service
 public class KeyBoardService {
 
@@ -18,11 +21,11 @@ public class KeyBoardService {
         var rowOne = new ArrayList<InlineKeyboardButton>();
         rowOne.add(InlineKeyboardButton.builder()
                 .text("Большой")
-                .callbackData("/big")
+                .callbackData(BIG_HALL.name())
                 .build());
         rowOne.add(InlineKeyboardButton.builder()
                 .text("Малый")
-                .callbackData("/big")
+                .callbackData(SMALL_HALL.name())
                 .build());
 
         return InlineKeyboardMarkup.builder()
