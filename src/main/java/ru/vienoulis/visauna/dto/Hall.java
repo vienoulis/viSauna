@@ -3,33 +3,38 @@ package ru.vienoulis.visauna.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import ru.vienoulis.visauna.model.exception.OutOfCapacityException;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 @Slf4j
 @AllArgsConstructor
 public class Hall {
+    @Getter
     private int capacity;
-    private final Map<Long, Long> visitorPriceMap = new HashMap<>();
+    private final Set<PriceSlot> visitorPriceMap = new HashSet<>();
 
     //todo избавиться от проброса стандартных исключений
-    public void setPriceFor(long countOfVisitor, long price) {
-        if (countOfVisitor > capacity || countOfVisitor <= 0)
-            throw new RuntimeException(String.format("Введенное значение (%d) не может быть меньше 1 и больше чем %d", countOfVisitor, capacity));
-        if (price < 1)
-            throw new RuntimeException(String.format("Ты ввел отрицательное число"));
-
-        visitorPriceMap.merge(countOfVisitor, price, (a, b) -> price);
+    public void setPriceFor(PriceSlot slot) {
+        visitorPriceMap.add(slot);
     }
 
-    public long getPriceFor(long countOfVisitor) {
-        if (countOfVisitor > capacity || countOfVisitor <= 0)
-            throw new RuntimeException(String.format("Введенное значение (%d) не может быть меньше 1 и больше чем %d", countOfVisitor, capacity));
+    public long getPriceFor(int countOfVisitor, boolean isWeekend) {
+        return visitorPriceMap.stream()
+                .filter(p -> p.inRange(countOfVisitor))
+                .findFirst()
+                .map(PriceSlot::getPrice)
+                .map(l -> isWeekend ? l + getWeekendTax() : l )
+                .orElseThrow();
+    }
 
-        if (visitorPriceMap.containsKey(countOfVisitor))
-            return visitorPriceMap.get(countOfVisitor);
+    private Long getWeekendTax() {
+        return 200L;
+    }
 
-        return getPriceFor(--countOfVisitor);
+
+    public Set<PriceSlot> getPriceList() {
+        return visitorPriceMap;
     }
 }
