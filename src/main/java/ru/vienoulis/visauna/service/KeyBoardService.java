@@ -51,7 +51,6 @@ public class KeyBoardService {
         KeyboardButton startBtn = new KeyboardButton("/start");
         KeyboardButton testBtn = KeyboardButton.builder()
                 .text("/test")
-                .requestContact(true)
                 .build();
 
         return ReplyKeyboardMarkup.builder()

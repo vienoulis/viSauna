@@ -69,7 +69,6 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
      * Шабонный метод отправки сообщения пользователю
      *
      * @param response - метод обработки сообщения
-     * @param msg      - сообщение
      */
     private void defaultMsg(SendMessage response) throws TelegramApiException {
         response.setReplyMarkup(kbService.getStartKB());
