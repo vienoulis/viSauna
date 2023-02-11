@@ -1,19 +1,17 @@
 package ru.vienoulis.visauna.handlers.cmd;
 
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.IBotCommand;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import ru.vienoulis.visauna.service.KeyBoardService;
 
-@Controller
+@Component
 public class StartCmd implements IBotCommand {
     private final KeyBoardService kbService;
 
-    @Autowired
     public StartCmd(KeyBoardService kbService) {
         this.kbService = kbService;
     }

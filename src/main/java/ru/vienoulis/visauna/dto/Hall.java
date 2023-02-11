@@ -3,9 +3,8 @@ package ru.vienoulis.visauna.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import ru.vienoulis.visauna.model.exception.OutOfCapacityException;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Slf4j
@@ -13,7 +12,13 @@ import java.util.Set;
 public class Hall {
     @Getter
     private int capacity;
-    private final Set<PriceSlot> visitorPriceMap = new HashSet<>();
+    private final Set<PriceSlot> visitorPriceMap = new LinkedHashSet<>();
+    @Getter
+    private String description;
+
+    public Hall(int capacity) {
+        this.capacity = capacity;
+    }
 
     //todo избавиться от проброса стандартных исключений
     public void setPriceFor(PriceSlot slot) {
@@ -25,7 +30,7 @@ public class Hall {
                 .filter(p -> p.inRange(countOfVisitor))
                 .findFirst()
                 .map(PriceSlot::getPrice)
-                .map(l -> isWeekend ? l + getWeekendTax() : l )
+                .map(l -> isWeekend ? l + getWeekendTax() : l)
                 .orElseThrow();
     }
 
