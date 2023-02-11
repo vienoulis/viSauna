@@ -14,6 +14,7 @@ import ru.vienoulis.visauna.dto.PriceSlot;
 import ru.vienoulis.visauna.handlers.cmd.BigHallCmd;
 import ru.vienoulis.visauna.handlers.cmd.SmallHallCmd;
 import ru.vienoulis.visauna.handlers.cmd.StartCmd;
+import ru.vienoulis.visauna.handlers.cmd.TestCmd;
 import ru.vienoulis.visauna.service.Repository;
 
 import java.util.HashSet;
@@ -34,11 +35,13 @@ public class AppConf {
 
     @Bean
     @Singleton
-    IBotCommand[] getHandlersCommand(StartCmd startCmd, BigHallCmd bigHallCmd, SmallHallCmd smallHallCmd) {
+    IBotCommand[] getHandlersCommand(StartCmd startCmd, BigHallCmd bigHallCmd,
+                                     SmallHallCmd smallHallCmd, TestCmd testCmd) {
         Set<IBotCommand> result = new HashSet<>();
         result.add(startCmd);
         result.add(bigHallCmd);
         result.add(smallHallCmd);
+        result.add(testCmd);
         return result.toArray(new IBotCommand[]{});
     }
 

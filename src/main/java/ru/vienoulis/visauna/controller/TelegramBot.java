@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.vienoulis.visauna.service.KeyBoardService;
 
 import java.util.Objects;
 
@@ -25,16 +26,18 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
     private final String botUsername;
     private final String botToken;
     private final String defaultMessage;
+    private final KeyBoardService kbService;
 
     public TelegramBot(
             TelegramBotsApi telegramBotsApi,
             @Value("${app.defaultMessage}") String defaultMessage,
             @Value("${telegram-bot.name}") String botUsername,
             @Value("${telegram-bot.token}") String botToken,
-            IBotCommand[] handlersCommand) throws TelegramApiException {
+            IBotCommand[] handlersCommand, KeyBoardService kbService) throws TelegramApiException {
         this.botUsername = botUsername;
         this.botToken = botToken;
         this.defaultMessage = defaultMessage;
+        this.kbService = kbService;
         telegramBotsApi.registerBot(this);
         registerAll(handlersCommand);
     }
@@ -69,6 +72,7 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
      * @param msg      - сообщение
      */
     private void defaultMsg(SendMessage response) throws TelegramApiException {
+        response.setReplyMarkup(kbService.getStartKB());
         execute(response);
     }
 }
