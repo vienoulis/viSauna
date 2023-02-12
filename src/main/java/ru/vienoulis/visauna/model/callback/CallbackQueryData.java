@@ -1,4 +1,8 @@
 package ru.vienoulis.visauna.model.callback;
 
-public interface CallbackQueryData {
+import lombok.Data;
+
+@Data
+public abstract class CallbackQueryData {
+    Action action;
 }
