@@ -11,7 +11,7 @@ import ru.vienoulis.visauna.service.KeyBoardService;
 
 import ru.vienoulis.visauna.service.Repository;
 
-import static ru.vienoulis.visauna.model.CallbackQueryHandlers.BIG_HALL;
+import static ru.vienoulis.visauna.model.CallbackQueryTypes.BIG_HALL;
 
 @Controller
 public class BigHallCmd implements IBotCommand {

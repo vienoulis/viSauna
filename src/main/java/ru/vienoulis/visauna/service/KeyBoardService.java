@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.vienoulis.visauna.model.CallbackQueryHandlers.BIG_HALL;
-import static ru.vienoulis.visauna.model.CallbackQueryHandlers.SMALL_HALL;
+import static ru.vienoulis.visauna.model.CallbackQueryTypes.BIG_HALL;
+import static ru.vienoulis.visauna.model.CallbackQueryTypes.SMALL_HALL;
 
 @Component
 public class KeyBoardService {
@@ -67,7 +67,7 @@ public class KeyBoardService {
         var kbRow = hall.getPriceList().stream()
                 .map(p -> InlineKeyboardButton.builder()
                         .text(p.toString())
-                        .callbackData("setCountVisitor")
+                        .callbackData(String.format("#test 1 two %s", BIG_HALL))
                         .build())
                 .collect(Collectors.toList());
 

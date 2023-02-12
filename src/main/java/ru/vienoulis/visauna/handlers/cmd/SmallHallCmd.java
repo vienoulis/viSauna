@@ -10,7 +10,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import ru.vienoulis.visauna.service.PriceCalculationService;
 import ru.vienoulis.visauna.service.Repository;
 
-import static ru.vienoulis.visauna.model.CallbackQueryHandlers.SMALL_HALL;
+import static ru.vienoulis.visauna.model.CallbackQueryTypes.SMALL_HALL;
 
 @Controller
 public class SmallHallCmd implements IBotCommand {

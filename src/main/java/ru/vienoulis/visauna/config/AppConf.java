@@ -11,6 +11,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import ru.vienoulis.visauna.dto.Hall;
 import ru.vienoulis.visauna.dto.PriceSlot;
+import ru.vienoulis.visauna.handlers.callback.CallbackQueryHandler;
+import ru.vienoulis.visauna.handlers.callback.TestQueryHandler;
 import ru.vienoulis.visauna.handlers.cmd.BigHallCmd;
 import ru.vienoulis.visauna.handlers.cmd.SmallHallCmd;
 import ru.vienoulis.visauna.handlers.cmd.StartCmd;
@@ -20,8 +22,8 @@ import ru.vienoulis.visauna.service.Repository;
 import java.util.HashSet;
 import java.util.Set;
 
-import static ru.vienoulis.visauna.model.CallbackQueryHandlers.BIG_HALL;
-import static ru.vienoulis.visauna.model.CallbackQueryHandlers.SMALL_HALL;
+import static ru.vienoulis.visauna.model.CallbackQueryTypes.BIG_HALL;
+import static ru.vienoulis.visauna.model.CallbackQueryTypes.SMALL_HALL;
 
 @Configuration
 @EnableAutoConfiguration
@@ -43,6 +45,14 @@ public class AppConf {
         result.add(smallHallCmd);
         result.add(testCmd);
         return result.toArray(new IBotCommand[]{});
+    }
+
+    @Bean
+    @Singleton
+    Set<CallbackQueryHandler> getQueryCommand(TestQueryHandler testQueryHandler) {
+        Set<CallbackQueryHandler> result = new HashSet<>();
+        result.add(testQueryHandler);
+        return result;
     }
 
     @Bean
