@@ -8,9 +8,12 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import ru.vienoulis.visauna.dto.Hall;
+
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static ru.vienoulis.visauna.model.CallbackQueryHandlers.BIG_HALL;
 import static ru.vienoulis.visauna.model.CallbackQueryHandlers.SMALL_HALL;
@@ -57,6 +60,19 @@ public class KeyBoardService {
                 .keyboardRow(new KeyboardRow(List.of(startBtn, testBtn)))
                 .resizeKeyboard(true)
                 .selective(true)
+                .build();
+    }
+
+    public InlineKeyboardMarkup getChooseVisitors(Hall hall) {
+        var kbRow = hall.getPriceList().stream()
+                .map(p -> InlineKeyboardButton.builder()
+                        .text(p.toString())
+                        .callbackData("setCountVisitor")
+                        .build())
+                .collect(Collectors.toList());
+
+        return InlineKeyboardMarkup.builder()
+                .keyboardRow(kbRow)
                 .build();
     }
 }

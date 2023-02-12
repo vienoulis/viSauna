@@ -27,4 +27,9 @@ public class PriceSlot {
     public String getStringValue() {
         return String.format("%d-%d чел. от %d руб/час.", min, max, price / 100);
     }
+
+    @Override
+    public String toString() {
+        return String.format("%d - %d чел.", getMin(), getMax());
+    }
 }

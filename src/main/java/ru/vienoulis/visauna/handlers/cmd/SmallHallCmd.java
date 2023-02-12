@@ -39,7 +39,7 @@ public class SmallHallCmd implements IBotCommand {
     public void processMessage(AbsSender absSender, Message message, String[] arguments) {
         messageToSend.setChatId(message.getChatId().toString());
         var smallHall = repository.getHall(SMALL_HALL.name());
-        messageToSend.setText(calculationService.getPriceList(smallHall));
+        messageToSend.setText(smallHall.getPriceListStringValue());
         absSender.execute(messageToSend);
     }
 }
