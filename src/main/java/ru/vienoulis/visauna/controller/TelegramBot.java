@@ -1,5 +1,7 @@
 package ru.vienoulis.visauna.controller;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.vienoulis.visauna.handlers.callback.CallbackQueryHandler;
+import ru.vienoulis.visauna.model.ShortCallbackData;
 import ru.vienoulis.visauna.service.KeyBoardService;
 
 import java.util.Objects;
@@ -32,7 +35,8 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
     private final String botToken;
     private final String defaultMessage;
     private final KeyBoardService kbService;
-    private final Set<CallbackQueryHandler> queryHandlers;
+    private final Set<CallbackQueryHandler<?>> queryHandlers;
+    private final Gson gson;
 
     public TelegramBot(
             TelegramBotsApi telegramBotsApi,
@@ -40,13 +44,14 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
             @Value("${telegram-bot.name}") String botUsername,
             @Value("${telegram-bot.token}") String botToken,
             IBotCommand[] handlersCommand,
-            Set<CallbackQueryHandler> queryHandlers,
-            KeyBoardService kbService) throws TelegramApiException {
+            Set<CallbackQueryHandler<?>> queryHandlers,
+            KeyBoardService kbService, Gson gson) throws TelegramApiException {
         this.botUsername = botUsername;
         this.botToken = botToken;
         this.defaultMessage = defaultMessage;
         this.kbService = kbService;
         this.queryHandlers = queryHandlers;
+        this.gson = gson;
         telegramBotsApi.registerBot(this);
         registerAll(handlersCommand);
     }
@@ -87,7 +92,15 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 
     private boolean isCallbackQueryCmd(CallbackQuery callbackQuery) {
         var data = callbackQuery.getData();
-        return StringUtils.startsWith(data, CQ_PREFIX) && queryHandlers.stream().anyMatch(c -> c.validate(callbackQuery));
+        try {
+            var shortData = gson.fromJson(data, ShortCallbackData.class);
+            return queryHandlers.stream()
+                    .map(CallbackQueryHandler::getIdentifier)
+                    .anyMatch(i -> Objects.equals(i, shortData.getAction()));
+        } catch (JsonSyntaxException e) {
+            log.warn("isCallbackQueryCmd.warn; cause by {}", e.getMessage());
+            return false;
+        }
     }
 
     /**

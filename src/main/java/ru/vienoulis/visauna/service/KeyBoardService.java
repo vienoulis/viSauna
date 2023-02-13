@@ -9,6 +9,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import ru.vienoulis.visauna.dto.Hall;
+import ru.vienoulis.visauna.model.callback.Action;
+import ru.vienoulis.visauna.model.callback.TestCQD;
 
 
 import java.util.ArrayList;
@@ -20,9 +22,13 @@ import static ru.vienoulis.visauna.model.CallbackQueryTypes.SMALL_HALL;
 
 @Component
 public class KeyBoardService {
+    private final Repository repository;
+    private final CallbackCompressorService compressorService;
 
     @Autowired
-    public KeyBoardService() {
+    public KeyBoardService(Repository repository, CallbackCompressorService compressorService) {
+        this.repository = repository;
+        this.compressorService = compressorService;
     }
 
     public InlineKeyboardMarkup getChooseHllKb() {
@@ -42,12 +48,17 @@ public class KeyBoardService {
     }
 
     public ReplyKeyboard test() {
-        ReplyKeyboardMarkup keyboardMarkup = ReplyKeyboardMarkup.builder()
+        var hall = repository.getHall(BIG_HALL.name());
+        var kbRow = hall.getPriceList().stream()
+                .map(p -> InlineKeyboardButton.builder()
+                        .text(p.toString())
+                        .callbackData(String.format("#test 1 two %s", BIG_HALL))
+                        .build())
+                .collect(Collectors.toList());
+
+        return InlineKeyboardMarkup.builder()
+                .keyboardRow(kbRow)
                 .build();
-        KeyboardButton testBtn = new KeyboardButton("testBtn");
-        keyboardMarkup.setResizeKeyboard(true);
-        keyboardMarkup.setKeyboard(List.of(new KeyboardRow(List.of(testBtn))));
-        return keyboardMarkup;
     }
 
     public ReplyKeyboard getStartKB() {
@@ -65,10 +76,13 @@ public class KeyBoardService {
 
     public InlineKeyboardMarkup getChooseVisitors(Hall hall) {
         var kbRow = hall.getPriceList().stream()
-                .map(p -> InlineKeyboardButton.builder()
-                        .text(p.toString())
-                        .callbackData(String.format("#test 1 two %s", BIG_HALL))
-                        .build())
+                .map(p -> {
+                    var shortData = compressorService.compressData(Action.test, TestCQD.builder().number(666).someString(p.toString()).build());
+                    return InlineKeyboardButton.builder()
+                            .text(p.toString())
+                            .callbackData(shortData)
+                            .build();
+                })
                 .collect(Collectors.toList());
 
         return InlineKeyboardMarkup.builder()

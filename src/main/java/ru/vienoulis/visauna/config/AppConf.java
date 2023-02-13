@@ -1,5 +1,6 @@
 package ru.vienoulis.visauna.config;
 
+import com.google.gson.Gson;
 import jakarta.inject.Singleton;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +18,7 @@ import ru.vienoulis.visauna.handlers.cmd.BigHallCmd;
 import ru.vienoulis.visauna.handlers.cmd.SmallHallCmd;
 import ru.vienoulis.visauna.handlers.cmd.StartCmd;
 import ru.vienoulis.visauna.handlers.cmd.TestCmd;
+import ru.vienoulis.visauna.model.callback.CallbackQueryData;
 import ru.vienoulis.visauna.service.Repository;
 
 import java.util.HashSet;
@@ -37,6 +39,12 @@ public class AppConf {
 
     @Bean
     @Singleton
+    Gson getGson() {
+        return new Gson();
+    }
+
+    @Bean
+    @Singleton
     IBotCommand[] getHandlersCommand(StartCmd startCmd, BigHallCmd bigHallCmd,
                                      SmallHallCmd smallHallCmd, TestCmd testCmd) {
         Set<IBotCommand> result = new HashSet<>();
@@ -49,8 +57,8 @@ public class AppConf {
 
     @Bean
     @Singleton
-    Set<CallbackQueryHandler> getQueryCommand(TestQueryHandler testQueryHandler) {
-        Set<CallbackQueryHandler> result = new HashSet<>();
+    Set<CallbackQueryHandler<? extends CallbackQueryData>> getQueryCommand(TestQueryHandler testQueryHandler) {
+        Set<CallbackQueryHandler<? extends CallbackQueryData>> result = new HashSet<>();
         result.add(testQueryHandler);
         return result;
     }
