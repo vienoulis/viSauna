@@ -14,13 +14,10 @@ public abstract class CallbackQueryHandler<T extends CallbackQueryData> {
     protected abstract void execute(AbsSender absSender, CallbackQuery callback);
 
     public void processMessage(AbsSender absSender, CallbackQuery callback) {
-//        data
         execute(absSender, callback);
     }
 
-    // todo косяк сдесь
     public boolean validate(CallbackQuery callbackQuery) {
-        var data = callbackQuery.getData();
-        return data.startsWith(String.format("%s%s", CQ_PREFIX, getIdentifier()));
+        return true;
     }
 }
