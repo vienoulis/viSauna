@@ -15,6 +15,8 @@ telegram-bot:
   token: 1754403412:AAFQ5cO26nf8emGj0EkSfAmyS5PCqMNdm90
   name: '@karabin_test_bot'
 app:
+  maxHours: 16
+  minHours: 2
   defaultMessage: Сначала напиши ТЗ
 server:
   port: '8081'

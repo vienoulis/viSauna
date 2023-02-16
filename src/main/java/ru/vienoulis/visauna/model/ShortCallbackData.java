@@ -5,10 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import ru.vienoulis.visauna.model.callback.Action;
 
+import java.util.UUID;
+
 @Data
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class ShortCallbackData {
     Action action;
-    long key;
+    String key;
 }

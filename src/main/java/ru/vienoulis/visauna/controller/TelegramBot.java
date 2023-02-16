@@ -1,5 +1,6 @@
 package ru.vienoulis.visauna.controller;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
@@ -22,7 +23,6 @@ import ru.vienoulis.visauna.service.KeyBoardService;
 import java.util.Objects;
 import java.util.Set;
 
-import static ru.vienoulis.visauna.handlers.callback.CallbackQueryHandler.CQ_PREFIX;
 import static ru.vienoulis.visauna.service.TextService.NO_COMMAND_DEFAULT_MST;
 
 @Slf4j

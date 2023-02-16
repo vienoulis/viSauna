@@ -2,12 +2,11 @@ package ru.vienoulis.visauna.dto;
 
 import lombok.Data;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 @Data
 public class PriceSlot {
+    public static final int MIN_HOURS = 2;
+    public static final int MAX_POW = 9;
+    public static final int MAX_HOURS = 17;
     int min;
     int max;
     long price;
@@ -26,6 +25,14 @@ public class PriceSlot {
 
     public String getStringValue() {
         return String.format("%d-%d чел. от %d руб/час.", min, max, price / 100);
+    }
+
+    public static int getMIN_HOURS() {
+        return MIN_HOURS;
+    }
+
+    public static int getMAX_HOURS() {
+        return MAX_HOURS;
     }
 
     @Override

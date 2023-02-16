@@ -13,6 +13,8 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import ru.vienoulis.visauna.dto.Hall;
 import ru.vienoulis.visauna.dto.PriceSlot;
 import ru.vienoulis.visauna.handlers.callback.CallbackQueryHandler;
+import ru.vienoulis.visauna.handlers.callback.PriceSlotCalculateHandler;
+import ru.vienoulis.visauna.handlers.callback.PriseSlotAndHoursHandler;
 import ru.vienoulis.visauna.handlers.callback.TestQueryHandler;
 import ru.vienoulis.visauna.handlers.cmd.BigHallCmd;
 import ru.vienoulis.visauna.handlers.cmd.SmallHallCmd;
@@ -57,9 +59,13 @@ public class AppConf {
 
     @Bean
     @Singleton
-    Set<CallbackQueryHandler<? extends CallbackQueryData>> getQueryCommand(TestQueryHandler testQueryHandler) {
+    Set<CallbackQueryHandler<? extends CallbackQueryData>> getQueryCommand(
+            TestQueryHandler testQueryHandler, PriseSlotAndHoursHandler priseSlotAndHoursHandler,
+            PriceSlotCalculateHandler priceSlotCalculateHandler) {
         Set<CallbackQueryHandler<? extends CallbackQueryData>> result = new HashSet<>();
         result.add(testQueryHandler);
+        result.add(priseSlotAndHoursHandler);
+        result.add(priceSlotCalculateHandler);
         return result;
     }
 

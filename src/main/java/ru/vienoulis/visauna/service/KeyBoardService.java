@@ -9,13 +9,16 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import ru.vienoulis.visauna.dto.Hall;
+import ru.vienoulis.visauna.dto.PriceSlot;
 import ru.vienoulis.visauna.model.callback.Action;
+import ru.vienoulis.visauna.model.callback.PriceSlotCQD;
+import ru.vienoulis.visauna.model.callback.PriseSlotAndHoursCQD;
 import ru.vienoulis.visauna.model.callback.TestCQD;
-
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static ru.vienoulis.visauna.model.CallbackQueryTypes.BIG_HALL;
 import static ru.vienoulis.visauna.model.CallbackQueryTypes.SMALL_HALL;
@@ -50,14 +53,17 @@ public class KeyBoardService {
     public ReplyKeyboard test() {
         var hall = repository.getHall(BIG_HALL.name());
         var kbRow = hall.getPriceList().stream()
-                .map(p -> InlineKeyboardButton.builder()
-                        .text(p.toString())
-                        .callbackData(String.format("#test 1 two %s", BIG_HALL))
-                        .build())
+                .map(p -> {
+                    var shortData = compressorService.compressData(Action.test, TestCQD.builder().number(666).someString(p.toString()).build());
+                    return InlineKeyboardButton.builder()
+                            .text(p.toString())
+                            .callbackData(shortData)
+                            .build();
+                })
                 .collect(Collectors.toList());
 
         return InlineKeyboardMarkup.builder()
-                .keyboardRow(kbRow)
+                .keyboard(List.of(kbRow))
                 .build();
     }
 
@@ -77,7 +83,8 @@ public class KeyBoardService {
     public InlineKeyboardMarkup getChooseVisitors(Hall hall) {
         var kbRow = hall.getPriceList().stream()
                 .map(p -> {
-                    var shortData = compressorService.compressData(Action.test, TestCQD.builder().number(666).someString(p.toString()).build());
+                    var shortData = compressorService.compressData(Action.priceSlot,
+                            PriceSlotCQD.builder().priceSlot(p).build());
                     return InlineKeyboardButton.builder()
                             .text(p.toString())
                             .callbackData(shortData)
@@ -87,6 +94,32 @@ public class KeyBoardService {
 
         return InlineKeyboardMarkup.builder()
                 .keyboardRow(kbRow)
+                .build();
+    }
+
+    public InlineKeyboardMarkup inputHours(PriceSlot priceSlot) {
+        var kbRow1 = IntStream.rangeClosed(PriceSlot.MIN_HOURS, PriceSlot.MAX_POW)
+                .mapToObj(i -> {
+                    var shortData = compressorService.compressData(Action.priceSlotWithHour,
+                            PriseSlotAndHoursCQD.builder().priceSlot(priceSlot).hours(i).build());
+                    return InlineKeyboardButton.builder()
+                            .text(String.valueOf(i))
+                            .callbackData(shortData)
+                            .build();
+                }).toList();
+
+        var kbRow2 = IntStream.rangeClosed(PriceSlot.MAX_POW + 1, PriceSlot.MAX_HOURS)
+                .mapToObj(i -> {
+                    var shortData = compressorService.compressData(Action.priceSlotWithHour,
+                            PriseSlotAndHoursCQD.builder().priceSlot(priceSlot).hours(i).build());
+                    return InlineKeyboardButton.builder()
+                            .text(String.valueOf(i))
+                            .callbackData(shortData)
+                            .build();
+                }).toList();
+
+        return InlineKeyboardMarkup.builder()
+                .keyboard(List.of(kbRow1, kbRow2))
                 .build();
     }
 }

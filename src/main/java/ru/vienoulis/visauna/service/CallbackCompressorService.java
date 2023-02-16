@@ -1,11 +1,14 @@
 package ru.vienoulis.visauna.service;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.vienoulis.visauna.model.ShortCallbackData;
 import ru.vienoulis.visauna.model.callback.Action;
 import ru.vienoulis.visauna.model.callback.CallbackQueryData;
+
+import java.util.UUID;
 
 @Component
 public class CallbackCompressorService {
@@ -28,7 +31,18 @@ public class CallbackCompressorService {
                 .build());
     }
 
-    private long generateKey() {
-        return System.currentTimeMillis();
+    private String generateKey() {
+        return NanoIdUtils.randomNanoId();
+    }
+
+    public CallbackQueryData deCompressData(String data) {
+        var shortData = gson.fromJson(data, ShortCallbackData.class);
+        var jsonElement = repository.getJson(shortData.getKey());
+        repository.removeJson(shortData.getKey());
+        return gson.fromJson(jsonElement, shortData.getAction().getDataClass());
+    }
+
+    public Action getActionFrom(String data) {
+        return gson.fromJson(data, ShortCallbackData.class).getAction();
     }
 }

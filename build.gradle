@@ -27,6 +27,7 @@ dependencies {
 //    implementation 'org.telegram:telegrambots-abilities:6.5.0'
     implementation 'org.telegram:telegrambotsextensions:6.5.0'
     implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.aventrix.jnanoid:jnanoid:2.0.0'
 
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.0-M5'
