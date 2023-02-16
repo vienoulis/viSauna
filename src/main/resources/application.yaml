@@ -1,16 +1,3 @@
-logging:
-  pattern:
-    file: '%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%'
-  level:
-    ru:
-      centerinform:
-        webhook: TRACE
-    org:
-      springframework:
-        web: DEBUG
-    root: INFO
-  file:
-    name: /var/log/viNote.log
 telegram-bot:
   token: 1754403412:AAFQ5cO26nf8emGj0EkSfAmyS5PCqMNdm90
   name: '@karabin_test_bot'
