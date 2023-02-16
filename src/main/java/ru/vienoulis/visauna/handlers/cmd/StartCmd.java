@@ -32,7 +32,12 @@ public class StartCmd implements IBotCommand {
         SendMessage message = new SendMessage();
         message.setChatId(msg.getChatId().toString());
         message.setReplyMarkup(kbService.getChooseHllKb());
-        message.setText("Клавиатура после команды старт");
+        message.enableHtml(true);
+        message.setText("""
+            <b><strong>Здравствуйте!</strong></b>
+        Я могу для Вас рассчитать стоимость
+        посещения нашей сауны.
+        <strong>Для начала выберите зал:</strong>""");
 
         absSender.execute(message);
     }
