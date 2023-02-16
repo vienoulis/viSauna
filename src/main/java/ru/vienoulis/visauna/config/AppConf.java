@@ -16,10 +16,7 @@ import ru.vienoulis.visauna.handlers.callback.CallbackQueryHandler;
 import ru.vienoulis.visauna.handlers.callback.PriceSlotCalculateHandler;
 import ru.vienoulis.visauna.handlers.callback.PriseSlotAndHoursHandler;
 import ru.vienoulis.visauna.handlers.callback.TestQueryHandler;
-import ru.vienoulis.visauna.handlers.cmd.BigHallCmd;
-import ru.vienoulis.visauna.handlers.cmd.SmallHallCmd;
-import ru.vienoulis.visauna.handlers.cmd.StartCmd;
-import ru.vienoulis.visauna.handlers.cmd.TestCmd;
+import ru.vienoulis.visauna.handlers.cmd.*;
 import ru.vienoulis.visauna.model.callback.CallbackQueryData;
 import ru.vienoulis.visauna.service.Repository;
 
@@ -47,13 +44,14 @@ public class AppConf {
 
     @Bean
     @Singleton
-    IBotCommand[] getHandlersCommand(StartCmd startCmd, BigHallCmd bigHallCmd,
+    IBotCommand[] getHandlersCommand(StartCmd startCmd, BigHallCmd bigHallCmd, BagCmd bagCmd,
                                      SmallHallCmd smallHallCmd, TestCmd testCmd) {
         Set<IBotCommand> result = new HashSet<>();
         result.add(startCmd);
         result.add(bigHallCmd);
         result.add(smallHallCmd);
         result.add(testCmd);
+        result.add(bagCmd);
         return result.toArray(new IBotCommand[]{});
     }
 

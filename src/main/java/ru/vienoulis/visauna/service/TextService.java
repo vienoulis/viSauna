@@ -12,7 +12,10 @@ public final class TextService {
             "3-4 чел. 1200 руб/час\n" +
             "5-10 чел. 1400 руб/час";
 
-    public static final String NO_COMMAND_DEFAULT_MST = "Для начала нажмите старт или введите команда /start.";
+    public static final String NO_COMMAND_DEFAULT_MST = """
+    Для начала нажмите старт или введите команда /start.
+    При обнаружении неисправности нажмите /bug
+    Полученный код сообщите <a href="tg://user?id=309427072">мне.</a>""";
 
     private TextService() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");

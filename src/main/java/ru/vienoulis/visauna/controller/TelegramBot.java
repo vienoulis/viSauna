@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.IBotCommand;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -71,7 +72,11 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
                         .filter(c -> Objects.equals(c.getCommandIdentifier(), callbackQuery.getData()))
                         .toList();
                 if (availableCmdList.isEmpty()) {
-                    defaultMsg(new SendMessage(callbackQuery.getMessage().getChatId().toString(), NO_COMMAND_DEFAULT_MST));
+                    defaultMsg(SendMessage.builder()
+                            .chatId(callbackQuery.getMessage().getChatId())
+                            .parseMode(ParseMode.HTML)
+                            .text(NO_COMMAND_DEFAULT_MST)
+                            .build());
                 } else {
                     availableCmdList.forEach(c -> c.processMessage(this, callbackQuery.getMessage(), null));
                 }
@@ -79,7 +84,11 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
         }
 
         if (update.hasMessage()) {
-            defaultMsg(new SendMessage(update.getMessage().getChatId().toString(), NO_COMMAND_DEFAULT_MST));
+            defaultMsg(SendMessage.builder()
+                    .chatId(update.getMessage().getChatId())
+                    .parseMode(ParseMode.HTML)
+                    .text(NO_COMMAND_DEFAULT_MST)
+                    .build());
         }
         log.info("processNonCommandUpdate.exit;");
     }

@@ -70,7 +70,7 @@ public class KeyBoardService {
     public ReplyKeyboard getStartKB() {
         KeyboardButton startBtn = new KeyboardButton("/start");
         KeyboardButton testBtn = KeyboardButton.builder()
-                .text("/test")
+                .text("/bug")
                 .build();
 
         return ReplyKeyboardMarkup.builder()
