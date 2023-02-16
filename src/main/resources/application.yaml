@@ -18,5 +18,6 @@ app:
   maxHours: 16
   minHours: 2
   defaultMessage: Сначала напиши ТЗ
+  percentForClean: 10
 server:
   port: '8081'
