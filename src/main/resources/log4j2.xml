@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="log.directory">/var/log/viSauna</Property>
+    </Properties>
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{DEFAULT} %-5p level %c{1.1.~.~} - %msg %throwable{10}%n"/>
+        </Console>
+
+        <RollingFile name="main" filename="${log.directory}/viSauna.log"
+                     filePattern="${log.directory}/viSauna-%d{yyyyMMddHHmm}.gz">
+            <PatternLayout>
+                <pattern>%d{DEFAULT} %-5p level %c{1.1.~.~} - %msg %throwable{10}%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <CronTriggeringPolicy schedule="0 0 0 * * ?"/>
+                <SizeBasedTriggeringPolicy size="512MB"/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${log.directory}">
+                    <IfFileName glob="*.gz">
+                        <IfAny>
+                            <IfLastModified age="90d"/>
+                            <IfAccumulatedFileCount exceeds="1000"/>
+                        </IfAny>
+                    </IfFileName>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <RollingFile name="errors" filename="${log.directory}/viSauna-errors.log"
+                     filePattern="${log.directory}/viSauna-errors-%d{yyyyMMddHHmm}.gz">
+            <PatternLayout>
+                <pattern>%d{DEFAULT} %-5p level %c{1.1.~.~} - %msg %throwable{10}%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <CronTriggeringPolicy schedule="0 0 0 * * ?"/>
+                <SizeBasedTriggeringPolicy size="512MB"/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${log.directory}">
+                    <IfFileName glob="*.gz">
+                        <IfAny>
+                            <IfLastModified age="90d"/>
+                            <IfAccumulatedFileCount exceeds="1000"/>
+                        </IfAny>
+                    </IfFileName>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="trace">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="main"/>
+            <AppenderRef ref="errors" level="error"/>
+        </Root>
+    </Loggers>
+</Configuration>
