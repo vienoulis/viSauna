@@ -10,10 +10,12 @@ import ru.vienoulis.visauna.model.callback.PriseSlotAndHoursCQD;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Set;
 
 @Slf4j
 @Component
 public class PriceCalculationService {
+    private static final Set<DayOfWeek> WEEKENDS = Set.of(DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);
 
     @Value("${app.percentForClean}")
     private long percentForClean;
@@ -51,6 +53,6 @@ public class PriceCalculationService {
     }
 
     private static boolean isWeekend(DayOfWeek dayOfWeek) {
-        return dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY;
+        return WEEKENDS.contains(dayOfWeek);
     }
 }
