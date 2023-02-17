@@ -8,3 +8,14 @@ app:
   percentForClean: 10
 server:
   port: '8081'
+logging:
+  file:
+    name: '/var/log/viSauna.log'
+
+  level:
+    org:
+      springframework:
+        web: WARN
+
+  pattern:
+    file: "%d{DEFAULT} %-5p level %c{1.1.~.~} - %msg %throwable{10}%n"

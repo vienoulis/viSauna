@@ -12,10 +12,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import ru.vienoulis.visauna.dto.Hall;
 import ru.vienoulis.visauna.dto.PriceSlot;
-import ru.vienoulis.visauna.handlers.callback.CallbackQueryHandler;
-import ru.vienoulis.visauna.handlers.callback.PriceSlotCalculateHandler;
-import ru.vienoulis.visauna.handlers.callback.PriseSlotAndHoursHandler;
-import ru.vienoulis.visauna.handlers.callback.TestQueryHandler;
+import ru.vienoulis.visauna.handlers.callback.*;
 import ru.vienoulis.visauna.handlers.cmd.*;
 import ru.vienoulis.visauna.model.callback.CallbackQueryData;
 import ru.vienoulis.visauna.service.Repository;
@@ -44,12 +41,9 @@ public class AppConf {
 
     @Bean
     @Singleton
-    IBotCommand[] getHandlersCommand(StartCmd startCmd, BigHallCmd bigHallCmd, BagCmd bagCmd,
-                                     SmallHallCmd smallHallCmd, TestCmd testCmd) {
+    IBotCommand[] getHandlersCommand(StartCmd startCmd, BagCmd bagCmd, TestCmd testCmd) {
         Set<IBotCommand> result = new HashSet<>();
         result.add(startCmd);
-        result.add(bigHallCmd);
-        result.add(smallHallCmd);
         result.add(testCmd);
         result.add(bagCmd);
         return result.toArray(new IBotCommand[]{});
@@ -59,11 +53,13 @@ public class AppConf {
     @Singleton
     Set<CallbackQueryHandler<? extends CallbackQueryData>> getQueryCommand(
             TestQueryHandler testQueryHandler, PriseSlotAndHoursHandler priseSlotAndHoursHandler,
-            PriceSlotCalculateHandler priceSlotCalculateHandler) {
+            PriceSlotCalculateHandler priceSlotCalculateHandler, CalculateHallHandler calculateHallHandler) {
         Set<CallbackQueryHandler<? extends CallbackQueryData>> result = new HashSet<>();
+        // todo Работает без этого, а почему?
         result.add(testQueryHandler);
         result.add(priseSlotAndHoursHandler);
         result.add(priceSlotCalculateHandler);
+        result.add(calculateHallHandler);
         return result;
     }
 
