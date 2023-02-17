@@ -61,29 +61,31 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
     @SneakyThrows
     public void processNonCommandUpdate(Update update) {
         log.info("processNonCommandUpdate.enter; usrMessage: {}", update.getMessage());
+
+        if (update.hasMessage()) {
+            processLikeMessage(update);
+            log.info("processNonCommandUpdate.exit; processLikeMessage");
+            return;
+        }
+
         if (update.hasCallbackQuery()) {
             log.info("processNonCommandUpdate.hasCallbackQuery;");
             if (isCanHandleCallback(update.getCallbackQuery())) {
                 handleCallbackQuery(update);
-                log.info("processNonCommandUpdate.exit;");
+                log.info("processNonCommandUpdate.exit; isCanHandleCallback");
                 return;
             }
 
-            var callbackQuery = update.getCallbackQuery();
-            var availableCmdList = getAvailableCmdList(callbackQuery);
-            getAvailableCmdList(callbackQuery);
-            if (availableCmdList.isEmpty()) {
-                sendDefaultMsg(callbackQuery.getMessage());
-            } else {
-                processCallbackLikeCmd(callbackQuery, availableCmdList);
-            }
-        }
-
-        if (update.hasMessage()) {
-            log.info("processNonCommandUpdate.hasMessage;");
-            sendDefaultMsg(update.getMessage());
+            log.info("processNonCommandUpdate; sendDefaultMsg");
+            sendDefaultMsg(update.getCallbackQuery().getMessage());
         }
         log.info("processNonCommandUpdate.exit;");
+    }
+
+    private void processLikeMessage(Update update) throws TelegramApiException {
+        log.info("processLikeMessage.enter;");
+        sendDefaultMsg(update.getMessage());
+        log.info("processLikeMessage.exit;");
     }
 
     private boolean isCanHandleCallback(CallbackQuery callbackQuery) {
@@ -100,29 +102,22 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
     }
 
     private void handleCallbackQuery(Update update) {
+        log.info("handleCallbackQuery.enter;");
         var callback = update.getCallbackQuery();
         queryHandlers.stream()
                 .filter(c -> c.validate(callback))
                 .forEach(c -> c.processMessage(this, callback));
-    }
-
-    private void processCallbackLikeCmd(CallbackQuery callbackQuery, List<IBotCommand> availableCmdList) {
-        availableCmdList.forEach(c ->
-                c.processMessage(this, callbackQuery.getMessage(), null));
+        log.info("handleCallbackQuery.exit;");
     }
 
     private void sendDefaultMsg(Message callbackQuery) throws TelegramApiException {
+        log.info("sendDefaultMsg.enter;");
         defaultMsg(SendMessage.builder()
                 .chatId(callbackQuery.getChatId())
                 .parseMode(ParseMode.HTML)
                 .text(NO_COMMAND_DEFAULT_MST)
                 .build());
-    }
-
-    private List<IBotCommand> getAvailableCmdList(CallbackQuery callbackQuery) {
-        return getRegisteredCommands().stream()
-                .filter(c -> Objects.equals(c.getCommandIdentifier(), callbackQuery.getData()))
-                .toList();
+        log.info("sendDefaultMsg.exit;");
     }
 
     /**
@@ -131,7 +126,9 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
      * @param response - метод обработки сообщения
      */
     private void defaultMsg(SendMessage response) throws TelegramApiException {
+        log.info("defaultMsg.enter;");
         response.setReplyMarkup(kbService.getStartKB());
         execute(response);
+        log.info("defaultMsg.exit;");
     }
 }
