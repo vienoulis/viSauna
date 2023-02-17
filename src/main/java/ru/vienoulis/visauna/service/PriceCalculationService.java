@@ -26,11 +26,13 @@ public class PriceCalculationService {
         var priceForClean = getPriceForClean(priceForVisit);
         var priceAndClean = priceForClean + priceForVisit;
 
-        return Prices.builder()
+        var result =  Prices.builder()
                 .priceForVisit(priceForVisit)
                 .priceForClean(priceForClean)
                 .priceAndClean(priceAndClean)
                 .build();
+        log.info("calculatePricePerHourFor.exit; result: {}", result);
+        return result;
     }
 
     private long getPriceForClean(long priceForVisit) {
