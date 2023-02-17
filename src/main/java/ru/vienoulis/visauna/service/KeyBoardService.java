@@ -10,18 +10,15 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import ru.vienoulis.visauna.dto.Hall;
 import ru.vienoulis.visauna.dto.PriceSlot;
-import ru.vienoulis.visauna.model.callback.Action;
-import ru.vienoulis.visauna.model.callback.PriceSlotCQD;
-import ru.vienoulis.visauna.model.callback.PriseSlotAndHoursCQD;
-import ru.vienoulis.visauna.model.callback.TestCQD;
+import ru.vienoulis.visauna.model.CallbackQueryTypes;
+import ru.vienoulis.visauna.model.callback.*;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static ru.vienoulis.visauna.model.CallbackQueryTypes.BIG_HALL;
-import static ru.vienoulis.visauna.model.CallbackQueryTypes.SMALL_HALL;
 
 @Component
 public class KeyBoardService {
@@ -35,18 +32,18 @@ public class KeyBoardService {
     }
 
     public InlineKeyboardMarkup getChooseHllKb() {
-        var rowOne = new ArrayList<InlineKeyboardButton>();
-        rowOne.add(InlineKeyboardButton.builder()
-                .text("Большой")
-                .callbackData(BIG_HALL.name())
-                .build());
-        rowOne.add(InlineKeyboardButton.builder()
-                .text("Малый")
-                .callbackData(SMALL_HALL.name())
-                .build());
+        var row = Arrays.stream(CallbackQueryTypes.values())
+                .map(c -> {
+                    var shortData = compressorService.compressData(Action.calculateHall,
+                            CalculateHallCQD.builder().hallType(c).build());
+                    return InlineKeyboardButton.builder()
+                            .text(c.getHallBtnName())
+                            .callbackData(shortData)
+                            .build();
+                }).toList();
 
         return InlineKeyboardMarkup.builder()
-                .keyboardRow(rowOne)
+                .keyboardRow(row)
                 .build();
     }
 

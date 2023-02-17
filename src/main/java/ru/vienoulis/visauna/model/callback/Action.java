@@ -4,6 +4,7 @@ import lombok.Getter;
 
 public enum Action {
     test(TestCQD.class),
+    calculateHall(CalculateHallCQD.class),
     priceSlot(PriceSlotCQD.class),
     priceSlotWithHour(PriseSlotAndHoursCQD.class);
     @Getter
