@@ -1,6 +1,7 @@
 package ru.vienoulis.visauna.config;
 
 import com.google.gson.Gson;
+import com.tbot.calendar.CalendarUtil;
 import jakarta.inject.Singleton;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -81,5 +82,11 @@ public class AppConf {
         repo.saveHall(SMALL_HALL.name(), smallHall);
 
         return repo;
+    }
+
+    @Bean
+    @Singleton
+    CalendarUtil getCalendarUtil() {
+        return new CalendarUtil();
     }
 }

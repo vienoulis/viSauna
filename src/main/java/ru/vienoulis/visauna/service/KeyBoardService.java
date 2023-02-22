@@ -1,7 +1,12 @@
 package ru.vienoulis.visauna.service;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.tbot.calendar.CalendarUtil;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -13,6 +18,8 @@ import ru.vienoulis.visauna.dto.PriceSlot;
 import ru.vienoulis.visauna.model.CallbackQueryTypes;
 import ru.vienoulis.visauna.model.callback.*;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,42 +29,42 @@ import static ru.vienoulis.visauna.model.CallbackQueryTypes.BIG_HALL;
 
 @Component
 public class KeyBoardService {
+    private final Gson gson;
     private final Repository repository;
+    private final CalendarUtil calendarUtil;
     private final CallbackCompressorService compressorService;
 
     @Autowired
-    public KeyBoardService(Repository repository, CallbackCompressorService compressorService) {
+    public KeyBoardService(Gson gson, Repository repository,
+                           CalendarUtil calendarUtil,
+                           CallbackCompressorService compressorService) {
+        this.gson = gson;
         this.repository = repository;
+        this.calendarUtil = calendarUtil;
         this.compressorService = compressorService;
     }
 
     public InlineKeyboardMarkup getChooseHllKb() {
+
         var row = getHallsBtnRow();
         var shortData = compressorService.compressData(Action.calendar, CalendarCQD.builder().build());
-        var bookBtn = InlineKeyboardButton.builder()
+        var calendarBtn = InlineKeyboardButton.builder()
                 .text("Календарь")
                 .callbackData(shortData)
                 .build();
 
         return InlineKeyboardMarkup.builder()
-                .keyboard(List.of(row, List.of(bookBtn)))
+                .keyboard(List.of(row, List.of(calendarBtn)))
                 .build();
     }
 
     public ReplyKeyboard test() {
-        var hall = repository.getHall(BIG_HALL.name());
-        var kbRow = hall.getPriceList().stream()
-                .map(p -> {
-                    var shortData = compressorService.compressData(Action.test, TestCQD.builder().number(666).someString(p.toString()).build());
-                    return InlineKeyboardButton.builder()
-                            .text(p.toString())
-                            .callbackData(shortData)
-                            .build();
-                })
-                .collect(Collectors.toList());
+        var gsonCalendarBtn = calendarUtil.generateKeyboard(LocalDate.now());
+        Type listType = new TypeToken<List<List<InlineKeyboardButton>>>(){}.getType();
+        List<List<InlineKeyboardButton>> btnArray = gson.fromJson(gsonCalendarBtn, listType);
 
         return InlineKeyboardMarkup.builder()
-                .keyboard(List.of(kbRow))
+                .keyboard(btnArray)
                 .build();
     }
 
