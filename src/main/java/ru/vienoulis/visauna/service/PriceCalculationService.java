@@ -15,8 +15,6 @@ import java.util.Set;
 @Slf4j
 @Component
 public class PriceCalculationService {
-    private static final Set<DayOfWeek> WEEKENDS = Set.of(DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);
-
     @Value("${app.percentForClean}")
     private long percentForClean;
 
@@ -42,19 +40,6 @@ public class PriceCalculationService {
     private long getPriceForVisit(PriseSlotAndHoursCQD priseSlotAndHour) {
         var hours = priseSlotAndHour.getHours();
         var priseSlot = priseSlotAndHour.getPriceSlot();
-        return getPricePerHours(priseSlot) * hours / 100;
-    }
-
-    private long getPricePerHours(PriceSlot priseSlot) {
-        return priseSlot.getPrice() + getWeekendTax();
-    }
-
-    private long getWeekendTax() {
-        var dayOfWeek = LocalDate.now(ZoneId.of("Europe/Moscow")).getDayOfWeek();
-        return isWeekend(dayOfWeek) ? 20000 : 0;
-    }
-
-    private static boolean isWeekend(DayOfWeek dayOfWeek) {
-        return WEEKENDS.contains(dayOfWeek);
+        return priseSlot.getPricePerHours() * hours / 100;
     }
 }

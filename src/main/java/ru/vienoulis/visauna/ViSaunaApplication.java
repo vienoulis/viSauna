@@ -9,5 +9,4 @@ public class ViSaunaApplication {
     public static void main(String[] args) {
         SpringApplication.run(ViSaunaApplication.class, args);
     }
-
 }

@@ -4,9 +4,11 @@ import lombok.Getter;
 
 public enum Action {
     test(TestCQD.class),
+    calendar(CalendarCQD.class),
     calculateHall(CalculateHallCQD.class),
     priceSlot(PriceSlotCQD.class),
     priceSlotWithHour(PriseSlotAndHoursCQD.class);
+
     @Getter
     Class<? extends CallbackQueryData> dataClass;
 

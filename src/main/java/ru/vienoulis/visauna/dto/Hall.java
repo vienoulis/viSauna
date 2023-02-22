@@ -24,7 +24,7 @@ public class Hall {
     public Set<PriceSlot> getPriceList() {
         return visitorPriceMap;
     }
-    //todo избавиться от проброса стандартных исключений
+
     public void setPriceFor(PriceSlot slot) {
         visitorPriceMap.add(slot);
     }

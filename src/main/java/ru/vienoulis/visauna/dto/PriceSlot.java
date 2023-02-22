@@ -2,8 +2,14 @@ package ru.vienoulis.visauna.dto;
 
 import lombok.Data;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Set;
+
 @Data
 public class PriceSlot {
+    private static final Set<DayOfWeek> WEEKENDS = Set.of(DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);
     public static final int MIN_HOURS = 2;
     public static final int MAX_POW = 9;
     public static final int MAX_HOURS = 17;
@@ -24,16 +30,22 @@ public class PriceSlot {
     }
 
     public String getStringValue() {
-        return String.format("%d-%d чел. от %d руб/час.", min, max, price / 100);
+        return String.format("%d-%d чел. от %d руб/час.", min, max, getPricePerHours() / 100);
     }
 
-    public static int getMIN_HOURS() {
-        return MIN_HOURS;
+    public long getPricePerHours() {
+        return getPrice() + getWeekendTax();
     }
 
-    public static int getMAX_HOURS() {
-        return MAX_HOURS;
+    private long getWeekendTax() {
+        var dayOfWeek = LocalDate.now(ZoneId.of("Europe/Moscow")).getDayOfWeek();
+        return isWeekend(dayOfWeek) ? 20000 : 0;
     }
+
+    private static boolean isWeekend(DayOfWeek dayOfWeek) {
+        return WEEKENDS.contains(dayOfWeek);
+    }
+
 
     @Override
     public String toString() {

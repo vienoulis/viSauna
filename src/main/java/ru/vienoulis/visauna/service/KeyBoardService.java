@@ -32,18 +32,15 @@ public class KeyBoardService {
     }
 
     public InlineKeyboardMarkup getChooseHllKb() {
-        var row = Arrays.stream(CallbackQueryTypes.values())
-                .map(c -> {
-                    var shortData = compressorService.compressData(Action.calculateHall,
-                            CalculateHallCQD.builder().hallType(c).build());
-                    return InlineKeyboardButton.builder()
-                            .text(c.getHallBtnName())
-                            .callbackData(shortData)
-                            .build();
-                }).toList();
+        var row = getHallsBtnRow();
+        var shortData = compressorService.compressData(Action.calendar, CalendarCQD.builder().build());
+        var bookBtn = InlineKeyboardButton.builder()
+                .text("Календарь")
+                .callbackData(shortData)
+                .build();
 
         return InlineKeyboardMarkup.builder()
-                .keyboardRow(row)
+                .keyboard(List.of(row, List.of(bookBtn)))
                 .build();
     }
 
@@ -95,28 +92,35 @@ public class KeyBoardService {
     }
 
     public InlineKeyboardMarkup inputHours(PriceSlot priceSlot) {
-        var kbRow1 = IntStream.rangeClosed(PriceSlot.MIN_HOURS, PriceSlot.MAX_POW)
-                .mapToObj(i -> {
-                    var shortData = compressorService.compressData(Action.priceSlotWithHour,
-                            PriseSlotAndHoursCQD.builder().priceSlot(priceSlot).hours(i).build());
-                    return InlineKeyboardButton.builder()
-                            .text(String.valueOf(i))
-                            .callbackData(shortData)
-                            .build();
-                }).toList();
-
-        var kbRow2 = IntStream.rangeClosed(PriceSlot.MAX_POW + 1, PriceSlot.MAX_HOURS)
-                .mapToObj(i -> {
-                    var shortData = compressorService.compressData(Action.priceSlotWithHour,
-                            PriseSlotAndHoursCQD.builder().priceSlot(priceSlot).hours(i).build());
-                    return InlineKeyboardButton.builder()
-                            .text(String.valueOf(i))
-                            .callbackData(shortData)
-                            .build();
-                }).toList();
+        var kbRow1 = getHoursBtnRow(priceSlot, PriceSlot.MIN_HOURS, PriceSlot.MAX_POW);
+        var kbRow2 = getHoursBtnRow(priceSlot, PriceSlot.MAX_POW + 1, PriceSlot.MAX_HOURS);
 
         return InlineKeyboardMarkup.builder()
                 .keyboard(List.of(kbRow1, kbRow2))
                 .build();
+    }
+
+    private List<InlineKeyboardButton> getHoursBtnRow(PriceSlot priceSlot, int minHours, int maxPow) {
+        return IntStream.rangeClosed(minHours, maxPow)
+                .mapToObj(i -> {
+                    var shortData = compressorService.compressData(Action.priceSlotWithHour,
+                            PriseSlotAndHoursCQD.builder().priceSlot(priceSlot).hours(i).build());
+                    return InlineKeyboardButton.builder()
+                            .text(String.valueOf(i))
+                            .callbackData(shortData)
+                            .build();
+                }).toList();
+    }
+
+    private List<InlineKeyboardButton> getHallsBtnRow() {
+        return Arrays.stream(CallbackQueryTypes.values())
+                .map(c -> {
+                    var shortData = compressorService.compressData(Action.calculateHall,
+                            CalculateHallCQD.builder().hallType(c).build());
+                    return InlineKeyboardButton.builder()
+                            .text(c.getHallBtnName())
+                            .callbackData(shortData)
+                            .build();
+                }).toList();
     }
 }
