@@ -6,7 +6,6 @@ import com.tbot.calendar.CalendarUtil;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -15,6 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import ru.vienoulis.visauna.dto.Hall;
 import ru.vienoulis.visauna.dto.PriceSlot;
+import ru.vienoulis.visauna.model.BookingSlot;
 import ru.vienoulis.visauna.model.CallbackQueryTypes;
 import ru.vienoulis.visauna.model.callback.*;
 
@@ -24,8 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static ru.vienoulis.visauna.model.CallbackQueryTypes.BIG_HALL;
 
 @Component
 public class KeyBoardService {
@@ -60,7 +58,8 @@ public class KeyBoardService {
 
     public ReplyKeyboard test() {
         var gsonCalendarBtn = calendarUtil.generateKeyboard(LocalDate.now());
-        Type listType = new TypeToken<List<List<InlineKeyboardButton>>>(){}.getType();
+        Type listType = new TypeToken<List<List<InlineKeyboardButton>>>() {
+        }.getType();
         List<List<InlineKeyboardButton>> btnArray = gson.fromJson(gsonCalendarBtn, listType);
 
         return InlineKeyboardMarkup.builder()
@@ -129,5 +128,14 @@ public class KeyBoardService {
                             .callbackData(shortData)
                             .build();
                 }).toList();
+    }
+
+    public List<InlineKeyboardButton> generateSlotsBtn(List<BookingSlot> currentSlots) {
+        List<InlineKeyboardButton> btnList = new ArrayList<>();
+        currentSlots.forEach(s -> btnList.add(InlineKeyboardButton.builder()
+                .text(String.valueOf(s.getSlotName()))
+                .callbackData("Тут должна быть callbackData")
+                .build()));
+        return btnList;
     }
 }

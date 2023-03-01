@@ -17,10 +17,10 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.vienoulis.visauna.handlers.callback.CallbackQueryHandler;
+import ru.vienoulis.visauna.handlers.date.LocalDateHandler;
 import ru.vienoulis.visauna.model.ShortCallbackData;
 import ru.vienoulis.visauna.service.KeyBoardService;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -38,6 +38,7 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
     private final KeyBoardService kbService;
     private final Set<CallbackQueryHandler<?>> queryHandlers;
     private final Gson gson;
+    private final LocalDateHandler localDateHandler;
 
     public TelegramBot(
             TelegramBotsApi telegramBotsApi,
@@ -46,13 +47,15 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
             @Value("${telegram-bot.token}") String botToken,
             IBotCommand[] handlersCommand,
             Set<CallbackQueryHandler<?>> queryHandlers,
-            KeyBoardService kbService, Gson gson) throws TelegramApiException {
+            KeyBoardService kbService, Gson gson,
+            LocalDateHandler localDateHandler) throws TelegramApiException {
         this.botUsername = botUsername;
         this.botToken = botToken;
         this.defaultMessage = defaultMessage;
         this.kbService = kbService;
         this.queryHandlers = queryHandlers;
         this.gson = gson;
+        this.localDateHandler = localDateHandler;
         telegramBotsApi.registerBot(this);
         registerAll(handlersCommand);
     }
@@ -73,6 +76,12 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
             if (isCanHandleCallback(update.getCallbackQuery())) {
                 handleCallbackQuery(update);
                 log.info("processNonCommandUpdate.exit; isCanHandleCallback");
+                return;
+            }
+
+            if (localDateHandler.isLocalData(update.getCallbackQuery())) {
+                var message = localDateHandler.handleCallbackQuery(update.getCallbackQuery());
+                sendMsg(message);
                 return;
             }
 
@@ -120,15 +129,16 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
         log.info("sendDefaultMsg.exit;");
     }
 
-    /**
-     * Шабонный метод отправки сообщения пользователю
-     *
-     * @param response - метод обработки сообщения
-     */
     private void defaultMsg(SendMessage response) throws TelegramApiException {
         log.info("defaultMsg.enter;");
         response.setReplyMarkup(kbService.getStartKB());
         execute(response);
         log.info("defaultMsg.exit;");
+    }
+
+    private void sendMsg(SendMessage response) throws TelegramApiException {
+        log.info("sendMsg.enter;");
+        execute(response);
+        log.info("sendMsg.exit;");
     }
 }
